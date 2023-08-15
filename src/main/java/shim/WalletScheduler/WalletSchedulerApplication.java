@@ -1,0 +1,13 @@
+package shim.WalletScheduler;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class WalletSchedulerApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(WalletSchedulerApplication.class, args);
+	}
+
+}

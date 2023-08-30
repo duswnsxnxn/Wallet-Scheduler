@@ -18,4 +18,5 @@ public class WalletQueues extends BaseTimeEntity{
     private Long walletId;
 
     private BigDecimal balances;
+
 }

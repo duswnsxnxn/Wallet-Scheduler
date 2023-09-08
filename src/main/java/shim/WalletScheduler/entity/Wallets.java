@@ -1,6 +1,7 @@
 package shim.WalletScheduler.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,13 +12,8 @@ import java.math.BigDecimal;
 public class Wallets extends BaseTimeEntity{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(name = "user_id")
-    private Long userId;
+    private Long wallet_id;
 
-    private String currency;
-
-    private BigDecimal balance;
+    private BigDecimal balances;
 
 }

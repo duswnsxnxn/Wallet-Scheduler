@@ -20,21 +20,21 @@ import java.util.concurrent.Executors;
 
 @Service
 @RequiredArgsConstructor
-@EnableScheduling
 @Transactional
+@EnableScheduling
 @Slf4j
 public class WalletQueuesService {
 
     private final WalletQueuesRepository queuesRepository;
     private final WalletsRepository walletsRepository;
     private final ExecutorService executorService = Executors.newFixedThreadPool(10);
-
     public List<WalletQueues> getWalletQueues() {
-            return queuesRepository.findTop100By();
+        return queuesRepository.findTop100By();
     }
+
     @Scheduled(fixedRate = 100)
     public void calc() {
-        List<WalletQueues> queues = queuesRepository.findTop100By();
+        List<WalletQueues> queues = getWalletQueues();
 
         if (!getWalletQueues().isEmpty()) {
             for (WalletQueues queue : queues) {
@@ -62,5 +62,9 @@ public class WalletQueuesService {
             }
         }
         executorService.shutdown();
+    }
+    @Scheduled(fixedRate = 1000)
+    public void test() {
+        log.info("작동");
     }
 }

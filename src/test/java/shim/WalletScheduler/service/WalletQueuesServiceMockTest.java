@@ -1,12 +1,11 @@
 package shim.WalletScheduler.service;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import shim.WalletScheduler.entity.WalletQueues;
 import shim.WalletScheduler.entity.Wallets;
 import shim.WalletScheduler.repository.WalletQueuesRepository;
@@ -48,7 +47,7 @@ class WalletQueuesServiceMockTest {
         queue.setBalances(new BigDecimal(100));
         queue.setWalletId(1L);
 
-        when(queuesRepository.findTop100By()).thenReturn(Arrays.asList(queue));
+        when(queuesRepository.getWalletQueuesBy(PageRequest.of(0, 100))).thenReturn(Arrays.asList(queue));
 
         Wallets wallets = new Wallets();
         wallets.setBalances(new BigDecimal(200));

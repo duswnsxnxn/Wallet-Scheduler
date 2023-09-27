@@ -11,6 +11,6 @@ public class WalletConfig {
 
     @Bean(destroyMethod = "shutdown")
     public ExecutorService executorService() {
-        return Executors.newFixedThreadPool(1);
+        return Executors.newFixedThreadPool(10);
     }
 }

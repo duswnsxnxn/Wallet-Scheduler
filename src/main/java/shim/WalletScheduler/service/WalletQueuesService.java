@@ -1,8 +1,8 @@
 package shim.WalletScheduler.service;
 
-import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -12,12 +12,12 @@ import shim.WalletScheduler.entity.Wallets;
 import shim.WalletScheduler.repository.WalletQueuesRepository;
 import shim.WalletScheduler.repository.WalletsRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +30,7 @@ public class WalletQueuesService {
     private final ExecutorService executorService;
 
     public List<WalletQueues> getWalletQueues() {
-        return queuesRepository.findTop100By();
+        return queuesRepository.getWalletQueuesBy(PageRequest.of(0 , 1000));
     }
 
     @Scheduled(fixedRate = 100)
@@ -38,8 +38,12 @@ public class WalletQueuesService {
     public void calc() {
         List<WalletQueues> queues = getWalletQueues();
 
-        if (!getWalletQueues().isEmpty()) {
-            for (WalletQueues queue : queues) {
+        if (queues.isEmpty()) {
+            return;
+        }
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+
+        for (WalletQueues queue : queues) {
                 CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
                     Optional<Wallets> optionalWallets = walletsRepository.findById(queue.getWalletId());
                     if (optionalWallets.isPresent()) {
@@ -53,16 +57,14 @@ public class WalletQueuesService {
                         walletsRepository.save(new_wallet);
                     }
                     queuesRepository.delete(queue);
-                        }, executorService);
-                try {
-                    future.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    log.error(
-                            "error: {}",
-                            e.toString());
-                }
+                }, executorService);
+            futures.add(future);
             }
+
+        try {
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("error: {}", e.toString());
+        }
         }
     }
-
-}

@@ -27,7 +27,7 @@ public class WalletQueuesService {
 
     private final WalletQueuesRepository queuesRepository;
     private final WalletsRepository walletsRepository;
-    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
+
     public List<WalletQueues> getWalletQueues() {
         return queuesRepository.findTop100By();
     }
@@ -37,6 +37,7 @@ public class WalletQueuesService {
         List<WalletQueues> queues = getWalletQueues();
 
         if (!getWalletQueues().isEmpty()) {
+            ExecutorService executorService = Executors.newFixedThreadPool(10);
             for (WalletQueues queue : queues) {
                 CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
                     Optional<Wallets> optionalWallets = walletsRepository.findById(queue.getWalletId());
@@ -60,11 +61,7 @@ public class WalletQueuesService {
                             e.toString());
                 }
             }
+            executorService.shutdown();
         }
-        executorService.shutdown();
-    }
-    @Scheduled(fixedRate = 1000)
-    public void test() {
-        log.info("작동");
     }
 }

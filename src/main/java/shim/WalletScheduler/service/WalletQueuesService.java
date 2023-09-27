@@ -1,5 +1,6 @@
 package shim.WalletScheduler.service;
 
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -20,24 +21,24 @@ import java.util.concurrent.Executors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 @EnableScheduling
 @Slf4j
 public class WalletQueuesService {
 
     private final WalletQueuesRepository queuesRepository;
     private final WalletsRepository walletsRepository;
+    private final ExecutorService executorService;
 
     public List<WalletQueues> getWalletQueues() {
         return queuesRepository.findTop100By();
     }
 
     @Scheduled(fixedRate = 100)
+    @Transactional
     public void calc() {
         List<WalletQueues> queues = getWalletQueues();
 
         if (!getWalletQueues().isEmpty()) {
-            ExecutorService executorService = Executors.newFixedThreadPool(10);
             for (WalletQueues queue : queues) {
                 CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
                     Optional<Wallets> optionalWallets = walletsRepository.findById(queue.getWalletId());
@@ -61,7 +62,7 @@ public class WalletQueuesService {
                             e.toString());
                 }
             }
-            executorService.shutdown();
         }
     }
+
 }

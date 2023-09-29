@@ -21,7 +21,6 @@ import java.util.concurrent.ExecutorService;
 
 @Service
 @RequiredArgsConstructor
-@EnableScheduling
 @Slf4j
 public class WalletQueuesService {
 

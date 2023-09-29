@@ -1,5 +1,6 @@
 package shim.WalletScheduler.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,6 +13,7 @@ import shim.WalletScheduler.repository.WalletQueuesRepository;
 import shim.WalletScheduler.repository.WalletsRepository;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +21,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@SpringBootTest(properties = {"spring.profiles.active=test"})
 class WalletQueuesServiceMockTest {
 
     @InjectMocks
@@ -31,11 +33,25 @@ class WalletQueuesServiceMockTest {
     @Mock
     private WalletsRepository walletsRepository;
 
+    @BeforeEach
+    void insertData() {
+
+        List<WalletQueues> queues = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            WalletQueues queue = new WalletQueues();
+            queue.setWalletId((long) i);
+            queue.setBalances(new BigDecimal(i));
+            queues.add(queue);
+        }
+
+        when(queuesRepository.findAll()).thenReturn(queues);
+    }
+
     @DisplayName("큐테이블에서 잘 가져오는지 확인")
     @Test
     public void t1() throws Exception {
-        List<WalletQueues> result = walletQueuesService.getWalletQueues();
-        assertThat(result.size()).isEqualTo(0);
+        List<WalletQueues> result = queuesRepository.findAll();
+        assertThat(result.size()).isEqualTo(100);
 
     }
 

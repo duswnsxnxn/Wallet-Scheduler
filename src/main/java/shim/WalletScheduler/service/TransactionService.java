@@ -18,19 +18,24 @@ public class TransactionService {
     private final WalletQueuesRepository queuesRepository;
     private final WalletsRepository walletsRepository;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public void processQueue(WalletQueues queue) {
         Optional<Wallets> optionalWallets = walletsRepository.findById(queue.getWalletId());
         if (optionalWallets.isPresent()) {
             Wallets wallets = optionalWallets.get();
-            wallets.setBalances(wallets.getBalances().add(queue.getBalances()));
-            walletsRepository.save(wallets);
+            wallets.changeBalance(wallets);
         } else {
-            Wallets new_wallet = new Wallets();
-            new_wallet.setBalances(queue.getBalances());
-            new_wallet.setWallet_id(queue.getWalletId());
-            walletsRepository.save(new_wallet);
+            Wallets new_wallet = Wallets.createWallets(queue);
+            this.saveWallet(new_wallet);
         }
+        this.deleteQueue(queue);
+    }
+
+    public void saveWallet(Wallets wallets) {
+        walletsRepository.save(wallets);
+    }
+
+    public void deleteQueue(WalletQueues queue) {
         queuesRepository.delete(queue);
     }
 

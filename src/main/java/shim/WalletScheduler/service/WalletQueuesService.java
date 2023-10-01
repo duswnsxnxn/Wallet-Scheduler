@@ -29,7 +29,7 @@ public class WalletQueuesService {
     private final ExecutorService executorService;
 
     public List<WalletQueues> getWalletQueues() {
-        return queuesRepository.getWalletQueuesBy(PageRequest.of(0 , 1000));
+        return queuesRepository.getWalletQueuesBy(PageRequest.of(0 , 100));
     }
 
     @Scheduled(fixedRate = 100)
@@ -40,6 +40,7 @@ public class WalletQueuesService {
         if (queues.isEmpty()) {
             return;
         }
+
         List<CompletableFuture<Void>> futures = new ArrayList<>();
 
         for (WalletQueues queue : queues) {

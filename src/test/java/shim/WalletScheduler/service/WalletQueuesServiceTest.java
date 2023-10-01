@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import shim.WalletScheduler.entity.WalletQueues;
 import shim.WalletScheduler.entity.Wallets;
+import shim.WalletScheduler.job.JobHander;
 import shim.WalletScheduler.repository.WalletQueuesRepository;
 import shim.WalletScheduler.repository.WalletsRepository;
 
@@ -21,6 +22,9 @@ class WalletQueuesServiceTest {
 
     @Autowired
     private WalletQueuesService walletQueuesService;
+
+    @Autowired
+    private JobHander jobHander;
 
     @Autowired
     private WalletQueuesRepository queuesRepository;
@@ -58,7 +62,7 @@ class WalletQueuesServiceTest {
     @Test
     public void t2() throws Exception {
 
-        walletQueuesService.calc();
+        jobHander.run();
         Wallets wallet = walletsRepository.findById(1L).orElse(null);
 
         assertThat(wallet.getBalances()).isEqualTo(new BigDecimal(45));

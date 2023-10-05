@@ -14,16 +14,17 @@ public class Wallets extends BaseTimeEntity{
     @Id
     private Long wallet_id;
 
-    private BigDecimal balances;
+    private BigDecimal balance;
 
     public static Wallets createWallets(WalletQueues queue) {
         Wallets wallet = new Wallets();
-        wallet.setBalances(queue.getBalances());
+        wallet.setBalance(queue.getBalances());
         wallet.setWallet_id(queue.getWalletId());
         return wallet;
     }
-    public void changeBalance(Wallets wallets) {
-        this.balances.add(wallets.getBalances());
+
+    public void changeBalance(WalletQueues queues) {
+        balance = balance.add(queues.getBalances());
     }
 
 }

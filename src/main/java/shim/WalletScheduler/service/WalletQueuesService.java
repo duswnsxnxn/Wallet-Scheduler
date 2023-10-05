@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutorService;
 public class WalletQueuesService {
 
     private final WalletQueuesRepository queuesRepository;
-    private final TransactionService queuesService;
+    private final TransactionService transactionService;
     private final ExecutorService executorService;
 
     public List<WalletQueues> getWalletQueues() {
@@ -36,7 +36,7 @@ public class WalletQueuesService {
 
         for (WalletQueues queue : queues) {
             CompletableFuture<Void> future =
-                    CompletableFuture.runAsync(() -> queuesService.processQueue(queue), executorService);
+                    CompletableFuture.runAsync(() -> transactionService.processQueue(queue), executorService);
             futures.add(future);
             }
 

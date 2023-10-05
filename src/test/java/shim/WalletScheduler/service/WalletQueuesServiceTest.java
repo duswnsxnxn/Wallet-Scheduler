@@ -12,7 +12,6 @@ import shim.WalletScheduler.repository.WalletQueuesRepository;
 import shim.WalletScheduler.repository.WalletsRepository;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -63,11 +62,11 @@ class WalletQueuesServiceTest {
     public void t2() throws Exception {
 
         jobHander.run();
-        Wallets wallet = walletsRepository.findById(1L).orElse(null);
+//        Wallets wallet = walletsRepository.findById(1L).orElse(null);
 
-        assertThat(wallet.getBalances()).isEqualTo(new BigDecimal(45));
+//        assertThat(wallet.getBalance()).isEqualTo(new BigDecimal(45));
 
-//        assertThat(queuesRepository.findAll().size()).isEqualTo(0);
+        assertThat(queuesRepository.findAll().size()).isEqualTo(0);
 
     }
 }

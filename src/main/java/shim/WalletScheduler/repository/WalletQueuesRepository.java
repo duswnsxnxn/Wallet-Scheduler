@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface WalletQueuesRepository extends JpaRepository<WalletQueues, Long> {
 
-//    @Lock(LockModeType.PESSIMISTIC_WRITE)
     List<WalletQueues> getWalletQueuesBy(Pageable pageable);
 
 }

@@ -2,6 +2,12 @@ spring:
   profiles:
     active: dev
     include: secret
+  sql:
+    init:
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+      mode: always
+      continue-on-error: true
   jpa:
     hibernate:
       ddl-auto: update

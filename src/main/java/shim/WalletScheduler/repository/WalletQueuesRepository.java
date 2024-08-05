@@ -1,6 +1,5 @@
 package shim.WalletScheduler.repository;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import shim.WalletScheduler.entity.WalletQueues;
